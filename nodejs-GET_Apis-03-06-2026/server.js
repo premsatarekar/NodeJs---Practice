@@ -43,23 +43,26 @@ app.get('/users', (req, res) => {
   });
 });
 
-// to get user by id
+/// GET single user by id
 app.get('/users/:id', (req, res) => {
-  const id = Number(res.params.id);
+  const id = Number(req.params.id);
 
-  // validation 1
+  // Validation 1: id should be a valid number
   if (!id || isNaN(id)) {
     return res.status(400).json({
       success: false,
-      message: 'invalid user id, user id must be a number',
+      message: 'Invalid user id. User id must be a valid number.',
     });
   }
 
-  // validation 2
+  // Find user
+  const user = users.find((user) => user.id === id);
+
+  // Validation 2: user should exist
   if (!user) {
-    return res.status(400).json({
+    return res.status(404).json({
       success: false,
-      message: 'sorry the user was not found',
+      message: `User not found with id ${id}`,
     });
   }
 
@@ -69,8 +72,6 @@ app.get('/users/:id', (req, res) => {
     message: 'User fetched successfully',
     data: user,
   });
-
-  const users = users.find((user) => user.id === id);
 });
 
 app.listen(PORT, (req, res) => {
